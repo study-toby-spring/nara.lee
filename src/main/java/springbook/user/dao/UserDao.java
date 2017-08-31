@@ -11,7 +11,7 @@ import java.sql.*;
  * 4. 조회의 경우 SQL 쿼리의 실행 결과를 ResultSet으로 받아서 정보를 저장한다.
  * 5. 작업 중에 생성된 리소스는 작업을 마친 후 반드시 닫아준다.
  */
-public class UserDao {
+public abstract class UserDao {
     public void add(User user) throws ClassNotFoundException, SQLException{
         Connection c = getConnection();
 
@@ -47,14 +47,28 @@ public class UserDao {
         return user;
     }
 
-    private Connection getConnection() throws ClassNotFoundException, SQLException {
-        Class.forName("com.mysql.jdbc.Driver");
-        Connection c = DriverManager.getConnection("jdbc:mysql://localhost/toby_spring", "root", "");
-        return c;
+    public abstract Connection getConnection() throws ClassNotFoundException, SQLException;
+
+    public class NUserDao extends UserDao{
+
+        public Connection getConnection() throws ClassNotFoundException, SQLException {
+            // N사 DB Connection 생성 코드
+            Class.forName("com.mysql.jdbc.Driver");
+            Connection c = DriverManager.getConnection("jdbc:mysql://localhost/toby_spring", "root", "");
+            return c;
+        }
+    }
+
+    public class DUserDao extends UserDao{
+
+        public Connection getConnection() throws ClassNotFoundException, SQLException {
+            // D사 DB Connection 생성 코드
+            return null;
+        }
     }
 
     public static void main(String[] args) throws SQLException, ClassNotFoundException {
-        UserDao userDao = new UserDao();
+        UserDao userDao = new NUserDao();
 
         User user = new User();
         user.setId("100");
