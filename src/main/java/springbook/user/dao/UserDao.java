@@ -53,21 +53,6 @@ public class UserDao {
         return user;
     }
 
-    public static void main(String[] args) throws SQLException, ClassNotFoundException {
-        UserDao userDao = new UserDao(new DConnectionMaker());
-
-        User user = new User();
-        user.setId("101");
-        user.setName("이나라");
-        user.setPassword("비밀번호");
-
-        userDao.add(user);
-        System.out.printf(user.getId() + "등록 성공");
-
-        User user2 = userDao.get(user.getId());
-        System.out.println(user2.getName() + ", " + user2.getPassword() + " 조회 성공");
-    }
-
     /**
      * 왜 이 코드에 문제가 많다고 하는 것일까?
      * 잘 동작하는 코드를 굳이 수정하고 개선해야 하는 이유는 뭘까?
