@@ -12,10 +12,10 @@ import java.sql.*;
  * 5. 작업 중에 생성된 리소스는 작업을 마친 후 반드시 닫아준다.
  */
 public class UserDao {
-    private SimpleConnectionMaker simpleConnectionMaker;
+    private ConnectionMaker simpleConnectionMaker;
 
     public UserDao(){
-        simpleConnectionMaker = new SimpleConnectionMaker();
+        simpleConnectionMaker = new DConnectionMaker();
     }
 
     public void add(User user) throws ClassNotFoundException, SQLException {
