@@ -11,9 +11,15 @@ import java.sql.*;
  * 4. 조회의 경우 SQL 쿼리의 실행 결과를 ResultSet으로 받아서 정보를 저장한다.
  * 5. 작업 중에 생성된 리소스는 작업을 마친 후 반드시 닫아준다.
  */
-public abstract class UserDao {
-    public void add(User user) throws ClassNotFoundException, SQLException{
-        Connection c = getConnection();
+public class UserDao {
+    private SimpleConnectionMaker simpleConnectionMaker;
+
+    public UserDao(){
+        simpleConnectionMaker = new SimpleConnectionMaker();
+    }
+
+    public void add(User user) throws ClassNotFoundException, SQLException {
+        Connection c = simpleConnectionMaker.makeNewConnection();
 
         PreparedStatement ps = c.prepareStatement("insert into users(id, name, password) values(?,?,?)");
         ps.setString(1, user.getId());
@@ -27,7 +33,7 @@ public abstract class UserDao {
     }
 
     public User get(String id) throws ClassNotFoundException, SQLException {
-        Connection c = getConnection();
+        Connection c = simpleConnectionMaker.makeNewConnection();
 
         PreparedStatement ps = c.prepareStatement("select * from users where id = ?");
         ps.setString(1, id);
@@ -47,31 +53,11 @@ public abstract class UserDao {
         return user;
     }
 
-    public abstract Connection getConnection() throws ClassNotFoundException, SQLException;
-
-    public class NUserDao extends UserDao{
-
-        public Connection getConnection() throws ClassNotFoundException, SQLException {
-            // N사 DB Connection 생성 코드
-            Class.forName("com.mysql.jdbc.Driver");
-            Connection c = DriverManager.getConnection("jdbc:mysql://localhost/toby_spring", "root", "");
-            return c;
-        }
-    }
-
-    public class DUserDao extends UserDao{
-
-        public Connection getConnection() throws ClassNotFoundException, SQLException {
-            // D사 DB Connection 생성 코드
-            return null;
-        }
-    }
-
     public static void main(String[] args) throws SQLException, ClassNotFoundException {
-        UserDao userDao = new NUserDao();
+        UserDao userDao = new UserDao();
 
         User user = new User();
-        user.setId("100");
+        user.setId("101");
         user.setName("이나라");
         user.setPassword("비밀번호");
 
