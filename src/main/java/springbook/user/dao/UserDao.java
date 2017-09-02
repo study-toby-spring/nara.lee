@@ -19,6 +19,10 @@ public class UserDao {
         this.connectionMaker = connectionMaker;
     }
 
+    public void setConnectionMaker(ConnectionMaker connectionMaker){
+        this.connectionMaker = connectionMaker;
+    }
+
     public static synchronized UserDao getInstance(){
         if(INSTANCE == null) INSTANCE = new UserDao(new DConnectionMaker());
         return INSTANCE;
