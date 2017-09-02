@@ -12,14 +12,20 @@ import java.sql.*;
  * 5. 작업 중에 생성된 리소스는 작업을 마친 후 반드시 닫아준다.
  */
 public class UserDao {
+    private static UserDao INSTANCE;
     private ConnectionMaker connectionMaker;
 
     public UserDao(ConnectionMaker connectionMaker){
         this.connectionMaker = connectionMaker;
     }
 
+    public static synchronized UserDao getInstance(){
+        if(INSTANCE == null) INSTANCE = new UserDao(new DConnectionMaker());
+        return INSTANCE;
+    }
+
     public void add(User user) throws ClassNotFoundException, SQLException {
-        Connection c = connectionMaker.makeNewConnection();
+        Connection c = connectionMaker.makeConnection();
 
         PreparedStatement ps = c.prepareStatement("insert into users(id, name, password) values(?,?,?)");
         ps.setString(1, user.getId());
@@ -33,7 +39,7 @@ public class UserDao {
     }
 
     public User get(String id) throws ClassNotFoundException, SQLException {
-        Connection c = connectionMaker.makeNewConnection();
+        Connection c = connectionMaker.makeConnection();
 
         PreparedStatement ps = c.prepareStatement("select * from users where id = ?");
         ps.setString(1, id);
