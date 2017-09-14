@@ -6,10 +6,13 @@ import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.datasource.SingleConnectionDataSource;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import springbook.user.domain.User;
 
+import javax.sql.DataSource;
 import java.sql.SQLException;
 
 import static org.hamcrest.MatcherAssert.assertThat;
@@ -17,6 +20,7 @@ import static org.hamcrest.CoreMatchers.is;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "/context/application-context.xml")
+@DirtiesContext
 public class UserDaoTest {
     @Autowired
     private ApplicationContext context;
@@ -38,13 +42,13 @@ public class UserDaoTest {
         User user1 = new User("gyumee", "박성철", "springno1");
         User user2 = new User("leegw700", "이길원", "springno2");
         User user3 = new User("bumjin", "박범진", "springno3");
+
+        DataSource dataSource = new SingleConnectionDataSource("jdbc:mysql://localhost/testdb", "root", "", true);
+        dao.setDataSource(dataSource);
     }
 
     @Test
     public void addAndGet() throws SQLException, ClassNotFoundException {
-        User user1 = new User("gyumee", "박성철", "springno1");
-        User user2 = new User("leegw700", "이길원", "springno2");
-
         dao.deleteAll();
         assertThat(dao.getCount(), is(0));
 
@@ -59,10 +63,6 @@ public class UserDaoTest {
 
     @Test
     public void count() throws SQLException {
-        User user1 = new User("gyumee", "박성철", "springno1");
-        User user2 = new User("leegw700", "이길원", "springno2");
-        User user3 = new User("bumjin", "박범진", "springno3");
-
         dao.deleteAll();
         assertThat(dao.getCount(), is(0));
 
