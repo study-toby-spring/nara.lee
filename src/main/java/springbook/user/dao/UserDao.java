@@ -55,6 +55,32 @@ public class UserDao {
         return user;
     }
 
+    public void deleteAll() throws SQLException {
+        Connection c = dataSource.getConnection();
+
+        PreparedStatement ps = c.prepareStatement("delete from users");
+        ps.executeUpdate();
+
+        ps.close();
+        c.close();
+    }
+
+    public int getCount() throws SQLException {
+        Connection c = dataSource.getConnection();
+
+        PreparedStatement ps = c.prepareStatement("select count(*) from users");
+
+        ResultSet rs = ps.executeQuery();
+        rs.next();
+        int count = rs.getInt(1);
+
+        rs.close();
+        ps.close();
+        c.close();
+
+        return count;
+    }
+
     /**
      * 왜 이 코드에 문제가 많다고 하는 것일까?
      * 잘 동작하는 코드를 굳이 수정하고 개선해야 하는 이유는 뭘까?
