@@ -13,14 +13,18 @@ public class UserDaoTest {
         UserDao dao  = context.getBean("userDao", UserDao.class); //@Bean
 
         User user = new User();
-        user.setId("114");
+        user.setId("116");
         user.setName("이나라");
         user.setPassword("비밀번호");
 
         dao.add(user);
-        System.out.printf(user.getId() + "등록 성공");
-
         User user2 = dao.get(user.getId());
-        System.out.println(user2.getName() + ", " + user2.getPassword() + " 조회 성공");
+        if(!user.getName().equals(user2.getName())){
+            System.out.println("테스트 실패 (name)");
+        }else if(!user.getPassword().equals(user2.getPassword())){
+            System.out.println("테스트 실패 (password)");
+        }else{
+            System.out.printf("조회 테스트 성공");
+        }
     }
 }
