@@ -13,7 +13,7 @@ import java.sql.*;
  * 4. 조회의 경우 SQL 쿼리의 실행 결과를 ResultSet으로 받아서 정보를 저장한다.
  * 5. 작업 중에 생성된 리소스는 작업을 마친 후 반드시 닫아준다.
  */
-public class UserDao {
+abstract public class UserDao {
     private static UserDao INSTANCE;
     private DataSource dataSource;
 
@@ -66,7 +66,7 @@ public class UserDao {
 
         try {
             c = dataSource.getConnection();
-            ps = c.prepareStatement("delete from users");
+            ps = makeStatement(c);
             ps.executeUpdate();
         }catch (SQLException e){
             throw e;
@@ -87,6 +87,8 @@ public class UserDao {
         ps.close();
         c.close();
     }
+
+    abstract protected PreparedStatement makeStatement(Connection c) throws SQLException;
 
     public int getCount() throws SQLException {
         Connection c = null;
