@@ -1,9 +1,9 @@
-package springbook.user.dao;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.datasource.SingleConnectionDataSource;
+import springbook.user.dao.UserDao;
+import springbook.user.dao.UserDaoDeleteAll;
 import springbook.user.domain.User;
 
 import javax.sql.DataSource;
@@ -21,7 +21,7 @@ public class UserDaoTest {
 
     @Before
     public void setUp(){
-        this.dao = new UserDao();
+        this.dao = new UserDaoDeleteAll();
         DataSource dataSource = new SingleConnectionDataSource("jdbc:mysql://localhost/toby_spring", "root", "", true);
         dao.setDataSource(dataSource);
         user1 = new User("gyumee", "박성철", "springno1");
