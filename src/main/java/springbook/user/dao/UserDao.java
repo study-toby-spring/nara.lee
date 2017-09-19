@@ -3,6 +3,7 @@ package springbook.user.dao;
 import org.springframework.dao.EmptyResultDataAccessException;
 import springbook.user.domain.User;
 
+import javax.sql.DataSource;
 import java.sql.*;
 
 /**
@@ -15,8 +16,9 @@ import java.sql.*;
 public class UserDao {
     private JdbcContext jdbcContext;
 
-    public void setJdbcContext(JdbcContext jdbcContext) {
-        this.jdbcContext = jdbcContext;
+    public void setDataSource(DataSource dataSource){
+        this.jdbcContext = new JdbcContext();
+        this.jdbcContext.setDataSource(dataSource);
     }
 
     public void add(final User user) throws SQLException {
