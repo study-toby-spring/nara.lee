@@ -3,7 +3,6 @@ package springbook.user.dao;
 import org.springframework.dao.EmptyResultDataAccessException;
 import springbook.user.domain.User;
 
-import javax.sql.DataSource;
 import java.sql.*;
 
 /**
@@ -14,28 +13,29 @@ import java.sql.*;
  * 5. 작업 중에 생성된 리소스는 작업을 마친 후 반드시 닫아준다.
  */
 public class UserDao {
-    private DataSource dataSource;
+    private JdbcContext jdbcContext;
 
-    public void setDataSource(DataSource dataSource) {
-        this.dataSource = dataSource;
+    public void setJdbcContext(JdbcContext jdbcContext) {
+        this.jdbcContext = jdbcContext;
     }
 
     public void add(final User user) throws SQLException {
-        StatementStrategy st = new StatementStrategy() {
-            public PreparedStatement makePreparedStatement(Connection c) throws SQLException {
-                PreparedStatement ps = c.prepareStatement("insert into users(id, name, password) values(?,?,?)");
-                ps.setString(1, user.getId());
-                ps.setString(2, user.getName());
-                ps.setString(3, user.getPassword());
+        this.jdbcContext.workWithStatementStrategy(
+            new StatementStrategy() {
+                public PreparedStatement makePreparedStatement(Connection c) throws SQLException {
+                    PreparedStatement ps = c.prepareStatement("insert into users(id, name, password) values(?,?,?)");
+                    ps.setString(1, user.getId());
+                    ps.setString(2, user.getName());
+                    ps.setString(3, user.getPassword());
 
-                return ps;
+                    return ps;
+                }
             }
-        };
-        jdbcContextWithStatementStrategy(st);
+        );
     }
 
     public User get(String id) throws SQLException {
-        Connection c = dataSource.getConnection();
+        Connection c = this.jdbcContext.getDataSource().getConnection();
 
         PreparedStatement ps = c.prepareStatement("select * from users where id = ?");
         ps.setString(1, id);
@@ -60,7 +60,7 @@ public class UserDao {
     }
 
     public void deleteAll() throws SQLException {
-        jdbcContextWithStatementStrategy(
+        this.jdbcContext.workWithStatementStrategy(
             new StatementStrategy() {
                 public PreparedStatement makePreparedStatement(Connection c) throws SQLException {
                     PreparedStatement ps = c.prepareStatement("delete from users");
@@ -76,7 +76,7 @@ public class UserDao {
         ResultSet rs = null;
 
         try{
-            c = dataSource.getConnection();
+            c = this.jdbcContext.getDataSource().getConnection();
             ps = c.prepareStatement("select count(*) from users");
             rs = ps.executeQuery();
             rs.next();
@@ -96,31 +96,6 @@ public class UserDao {
                 try{
                     c.close();
                 }catch (SQLException e){ }
-            }
-        }
-    }
-
-    public void jdbcContextWithStatementStrategy(StatementStrategy stmt) throws SQLException{
-        Connection c = null;
-        PreparedStatement ps = null;
-
-        try{
-            c = dataSource.getConnection();
-            ps = stmt.makePreparedStatement(c);
-            ps.executeUpdate();
-        }catch (SQLException e){
-            throw e;
-        }finally {
-            if(ps != null){
-                try{
-                    ps.close();
-                }catch (SQLException e){}
-            }
-
-            if(c != null){
-                try{
-                    c.close();
-                }catch (SQLException e){}
             }
         }
     }
