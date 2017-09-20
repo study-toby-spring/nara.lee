@@ -2,7 +2,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.datasource.SingleConnectionDataSource;
-import springbook.user.dao.JdbcContext;
 import springbook.user.dao.UserDao;
 import springbook.user.domain.User;
 
@@ -23,9 +22,7 @@ public class UserDaoTest {
     public void setUp(){
         this.dao = new UserDao();
         DataSource dataSource = new SingleConnectionDataSource("jdbc:mysql://localhost/toby_spring", "root", "", true);
-        JdbcContext jdbcContext =new JdbcContext();
-        jdbcContext.setDataSource(dataSource);
-        dao.setJdbcContext(jdbcContext);
+        dao.setDataSource(dataSource);
 
         user1 = new User("gyumee", "박성철", "springno1");
         user2 = new User("leegw700", "이길원", "springno2");
