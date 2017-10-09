@@ -23,7 +23,7 @@ public class UserDaoTest {
     public void setUp(){
         this.dao = new UserDao();
         DataSource dataSource = new SingleConnectionDataSource("jdbc:mysql://localhost/toby_spring", "root", "", true);
-        dao.setDataSource(dataSource);
+        dao.setJdbcTemplate(dataSource);
 
         user1 = new User("gyumee", "박성철", "springno1");
         user2 = new User("leegw700", "이길원", "springno2");
