@@ -6,6 +6,7 @@ import springbook.user.domain.User;
 
 import javax.sql.DataSource;
 import java.sql.*;
+import java.util.List;
 
 /**
  * 1. DB 연결을 위한 Connection을 가져온다.
@@ -58,6 +59,19 @@ public class UserDao {
 //            }
 //        });
         return this.jdbcTemplate.queryForObject("select count(*) from users", Integer.class);
+    }
+
+    public List<User> getAll() {
+        return this.jdbcTemplate.query("select * from users order by id",
+                new RowMapper<User>() {
+                    public User mapRow(ResultSet resultSet, int i) throws SQLException {
+                        User user = new User();
+                        user.setId(resultSet.getString("id"));
+                        user.setName(resultSet.getString("name"));
+                        user.setPassword(resultSet.getString("password"));
+                        return user;
+                    }
+                });
     }
 
     /**
