@@ -1,13 +1,11 @@
 package springbook.user.dao;
 
-import com.mysql.jdbc.MysqlErrorNumbers;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
-import springbook.Exception.DuplicateUserIdException;
 import springbook.user.domain.User;
 
 import javax.sql.DataSource;
-import java.io.IOException;
 import java.sql.*;
 import java.util.List;
 
@@ -35,17 +33,9 @@ public class UserDao {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
     }
 
-    public void add(final User user) throws DuplicateUserIdException {
-        try {
-            this.jdbcTemplate.update("insert into users(id, name, password) values(?,?,?)",
-                    user.getId(), user.getName(), user.getPassword());
-        }catch(SQLException e){
-            if(e.getErrorCode() == MysqlErrorNumbers.ER_DUP_ENTRY) {
-                throw new DuplicateUserIdException(e);
-            }else{
-                throw new RuntimeException(e);
-            }
-        }
+    public void add(final User user) throws DuplicateKeyException {
+        this.jdbcTemplate.update("insert into users(id, name, password) values(?,?,?)",
+                user.getId(), user.getName(), user.getPassword());
     }
 
     public User get(String id) throws SQLException {
